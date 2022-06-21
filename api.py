@@ -30,6 +30,12 @@ post_args.add_argument('last_name', type=str, help='Last name is mandatory', req
 post_args.add_argument('team', type=str, help='team name is mandatory', required=True )
 post_args.add_argument('points', type=int, help='First name is mandatory', required=True)
 
+put_args= reqparse.RequestParser()
+put_args.add_argument('first_name', type=str)
+put_args.add_argument('last_name', type=str)
+put_args.add_argument('team', type=str)
+put_args.add_argument('points', type=int)
+
 
 class DriverStandings(Resource):
     def get(self) :
@@ -46,6 +52,27 @@ class Drivers(Resource):
             abort(409, description='Driver already exists')
         args=post_args.parse_args()
         drivers_standings[driver_id] = {"first_name":args["first_name"], "last_name": args["last_name"], "team": args["team"], "points":args["points"]}
+        return drivers_standings[driver_id]
+    
+    def delete(self, driver_id):
+        if driver_id not in drivers_standings:
+            abort(404, description="Driver not found")
+        del drivers_standings[driver_id]
+        return drivers_standings
+
+    def put(self, driver_id):
+        if driver_id not in drivers_standings:
+            abort(404, description="Driver not found")
+        args=put_args.parse_args()
+        if args["first_name"]: 
+            drivers_standings[driver_id]["first_name"] = args["first_name"]
+        if args["last_name"]: 
+            drivers_standings[driver_id]["last_name"] = args["last_name"]
+        if args["team"]: 
+            drivers_standings[driver_id]["team"] = args["team"]
+        if args["points"]: 
+            drivers_standings[driver_id]["points"] = args["points"]
+        
         return drivers_standings[driver_id]
 
 api.add_resource(DriverStandings, '/driverstandings')
