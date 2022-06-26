@@ -1,4 +1,6 @@
 import psycopg2 # python driver to set connexion to Postgres
+from sql_queries import drop_table_queries, create_table_queries
+
 def create_database():
 	#connect to the default database :
 	conn=psycopg2.connect("host=127.0.0.1 dbname=postgres user=postgres password=admin" )
@@ -24,15 +26,17 @@ def drop_tables(cur, conn):
 	for query in drop_table_queries:
 		cur.execute(query)
 		conn.commit()
+		print('dropping table is completed')
 def create_tables(cur, conn):
 	for query in create_table_queries:
 		cur.execute(query)
 		conn.commit()
+		print('creating table is completed')
 
 def main():
 	cur, conn = create_database()
-	#drop_tables(cur, conn)
-	#create_tables(cur, conn)
+	drop_tables(cur, conn)
+	create_tables(cur, conn)
 
 	conn.close()
 
